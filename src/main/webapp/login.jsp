@@ -23,7 +23,7 @@
 						%>
 						<div class="mb-1 text-center">
 								<img name="logo" src="../PROYECTOLP1/img/logo.png" class="img-fluid" style="max-width: 150px;" alt="Image"></a>
-							</div>
+						</div>
 						<p class="mb-4">Por favor, ingrese sus credenciales.</p>
 						<form class="needs-validation" action="loginController" method="post" novalidate>
 							
