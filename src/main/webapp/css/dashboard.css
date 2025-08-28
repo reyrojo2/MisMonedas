@@ -12,10 +12,10 @@ body {
  * Canvas
  */
 
-#myChart {
+.dashboard-chart {
   background-color: white;
+  border-radius: 8px;
 }
-
 /*
  * Sidebar
  */

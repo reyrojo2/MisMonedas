@@ -6,7 +6,7 @@
 <jsp:include page="head.jsp"></jsp:include>
 <!-- FIN DEL HEAD -->
 
-<body>
+<body id=login>
 	<div class="container d-flex flex-column">
 		<div class="row align-items-center justify-content-center g-0 min-vh-100">
 			<div class="col-12 col-md-8 col-lg-6 col-xxl-4 py-8 py-xl-0">
@@ -22,7 +22,7 @@
 						    }
 						%>
 						<div class="mb-1 text-center">
-								<img name="logo" src="../PROYECTOLP1/img/logo.png" class="img-fluid" style="max-width: 150px;" alt="Image"></a>
+								<img name="logo" src="../PROYECTOLP1/img/logo.png" class="img-fluid" style="max-width: 150px;" alt="Image">
 						</div>
 						<p class="mb-4">Por favor, ingrese sus credenciales.</p>
 						<form class="needs-validation" action="loginController" method="post" novalidate>
@@ -43,6 +43,9 @@
 								<div class="invalid-feedback">
 									Ingrese la clave
 								</div>
+							</div>
+							<div class="text-center mb-3">
+							  <a href="registro.jsp">¿No tienes cuenta? Regístrate</a>
 							</div>
 
 							<!-- Botón -->

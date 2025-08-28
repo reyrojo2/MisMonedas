@@ -3,5 +3,8 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="js/validation.js"></script>
+<script id="dashboard-data" type="application/json"><%= (String) request.getAttribute("dashboardJson") %></script>
 <script src="js/dashboard.js"></script>
+<script src="<%= request.getContextPath() %>/js/presupuesto-alerts.js"></script>
+<script src="<%= request.getContextPath() %>/js/metas-alerts.js"></script>
 </footer>

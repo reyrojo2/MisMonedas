@@ -1,44 +1,79 @@
 package model;
 
+import java.sql.Date;
+
 public class Egreso {
-	private String descripcion;
-	private double monto;
-	private String fecha;
-	private String categoria; // Nuevo atributo
+	private int id;
+    private double monto;
+    private String categoria;
+    private Date fecha;
+    private String descripcion; 
+    private int userId;
 
-	public Egreso() {
+    
+  //CONTRUCTOR
+  	public Egreso() {
+  	}
+  	
+  	
+  //GETTER Y SETTER
+  	public int getUserId() {
+		return userId;
 	}
 
-	public String getDescripcion() {
-		return descripcion;
+
+	public void setUserId(int userId) {
+		this.userId = userId;
 	}
 
-	public void setDescripcion(String descripcion) {
-		this.descripcion = descripcion;
+	public int getId() {
+		return id;
 	}
+
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
 
 	public double getMonto() {
 		return monto;
 	}
 
+
 	public void setMonto(double monto) {
 		this.monto = monto;
 	}
 
-	public String getFecha() {
-		return fecha;
-	}
 
-	public void setFecha(String fecha) {
-		this.fecha = fecha;
-	}
-
-	public String getCategoria() { // Getter para categoria
+	public String getCategoria() {
 		return categoria;
 	}
 
-	public void setCategoria(String categoria) { // Setter para categoria
+
+	public void setCategoria(String categoria) {
 		this.categoria = categoria;
 	}
-}
 
+
+	public Date getFecha() {
+		return fecha;
+	}
+
+
+	public void setFecha(Date fecha) {
+		this.fecha = fecha;
+	}
+
+
+	public String getDescripcion() {
+		return descripcion;
+	}
+
+
+	public void setDescripcion(String descripcion) {
+		this.descripcion = descripcion;
+	}
+
+	
+}

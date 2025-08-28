@@ -1,2 +1,11 @@
 eclipse.preferences.version=1
+encoding//src/main/java/controller/loginController.java=UTF-8
+encoding//src/main/java/model/CrearTablaCat.java=UTF-8
+encoding//src/main/java/model/CrearTablaPre.java=UTF-8
+encoding//src/main/java/model/CrearTablaUsers.java=UTF-8
+encoding//src/main/java/model/DedupCategorias.java=UTF-8
+encoding//src/main/java/model/InspectorBD.java=UTF-8
+encoding//src/main/java/model/UpdateTablaCat.java=UTF-8
+encoding//src/main/java/service/DashboardService.java=UTF-8
+encoding//src/main/java/service/PresupuestoService.java=UTF-8
 encoding/<project>=windows-1252

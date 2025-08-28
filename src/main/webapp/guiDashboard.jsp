@@ -1,167 +1,177 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<!DOCTYPE html>
-<html>
-<jsp:include page="head.jsp"></jsp:include>
-  <body>
-    
-<div class="container-fluid">
-  <div class="row">
-        <%
-		    request.setAttribute("activePage", "dashboard");
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard - MisMonedas</title>
+  <jsp:include page="head.jsp" />
+</head>
+<body>
+  <!-- Navbar -->
+  <jsp:include page="navbar.jsp" />
+
+  <%
+    // Recuperar el ViewModel preparado por el DashboardController
+    modelvm.DashboardViewModel vm =
+      (modelvm.DashboardViewModel) request.getAttribute("dashboard");
+    if (vm == null) {
+  %>
+    <div class="container py-4">
+      <div class="alert alert-danger">No hay datos del dashboard.</div>
+    </div>
+  <%
+      return;
+    }
+  %>
+
+  <!-- Contenido -->
+  <div class="container-fluid">
+    <div class="row">
+      <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+        <h1 class="mt-3">Dashboard</h1>
+		<%
+		  String startParam = request.getParameter("startDate");
+		  String endParam   = request.getParameter("endDate");
+		  String monthParam = request.getParameter("month");
 		%>
-	<!-- Navbar + Sidebar -->
-    <jsp:include page="navbar.jsp" />
-    
-    <!-- Contenido principal -->
-    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-      <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h1 class="h2">Gastos semanales</h1>
-        <div class="btn-toolbar mb-2 mb-md-0">
-          <div class="btn-group me-2">
-            <button type="button" class="btn btn-sm btn-success">Exportar</button>
+		
+		<form class="row g-2 align-items-end mb-4" method="get" action="<%= request.getContextPath() %>/DashboardController">
+		  <div class="col-auto">
+		    <label for="month" class="form-label">Filtrar por mes</label>
+		    <input type="month" class="form-control" id="month" name="month"
+		           value="<%= (monthParam != null ? monthParam : "") %>">
+		  </div>
+		
+		  <div class="col-auto">
+		    <label for="startDate" class="form-label">Desde</label>
+		    <input type="date" class="form-control" id="startDate" name="startDate"
+		           value="<%= (startParam != null ? startParam : "") %>">
+		  </div>
+		
+		  <div class="col-auto">
+		    <label for="endDate" class="form-label">Hasta</label>
+		    <input type="date" class="form-control" id="endDate" name="endDate"
+		           value="<%= (endParam != null ? endParam : "") %>">
+		  </div>
+		
+		  <div class="col-auto">
+		    <button type="submit" class="btn btn-primary">Aplicar</button>
+		    <a class="btn btn-outline-danger" href="<%= request.getContextPath() %>/DashboardController">Limpiar</a>
+		  </div>
+		
+		  <div class="col-12">
+		    <small class="text-muted d-block mt-2">
+		      Consejo: si seleccionas <code>un mes</code>, se ignora la <code>fecha de inicio</code>/<code>fecha final</code> y usa todo ese mes.
+		    </small>
+		  </div>
+		</form>
+		<!-- Totales -->
+		<div class="row mt-4 g-3 align-items-stretch">
+		
+		  <!-- TOTAL INGRESOS -->
+		  <div class="col-12 col-md-4">
+		    <div class="card border-0 shadow-sm h-100 rounded-3">
+		      <div class="card-header text-center text-white bg-teal text-uppercase fw-bold fs-5">
+		        Total Ingresos
+		      </div>
+		      <div class="card-body text-center">
+		        <div class="display-6 fw-bold text-dark">
+		          S/ <%= vm.getTotalIngresos() %>
+		        </div>
+		      </div>
+		    </div>
+		  </div>
+		
+		  <!-- TOTAL GASTOS -->
+		  <div class="col-12 col-md-4">
+		    <div class="card border-0 shadow-sm h-100 rounded-3">
+		      <div class="card-header text-center text-white bg-danger text-uppercase fw-bold fs-5">
+		        Total Gastos
+		      </div>
+		      <div class="card-body text-center">
+		        <div class="display-6 fw-bold text-dark">
+		          S/ <%= vm.getTotalEgresos() %>
+		        </div>
+		      </div>
+		    </div>
+		  </div>
+		
+		  <!-- BALANCE / GANANCIA -->
+		  <div class="col-12 col-md-4">
+		    <div class="card border-0 shadow-sm h-100 rounded-3">
+		      <div class="card-header text-center text-dark bg-warning text-uppercase fw-bold fs-5">
+		        Ganancia
+		      </div>
+		      <div class="card-body text-center">
+		        <div class="display-6 fw-bold text-dark">
+		          S/ <%= (vm.getTotalIngresos() - vm.getTotalEgresos()) %>
+		        </div>
+		      </div>
+		    </div>
+		  </div>
+		
+		</div>
+
+
+        <!-- Gráficos -->
+        <div class="row mt-3">
+          <div class="col-md-6">
+            <h4>Ingresos por Categoría</h4>
+            <canvas id="ingresosChart" class="dashboard-chart"></canvas>
           </div>
-          <button type="button" class="btn btn-sm btn-success dropdown-toggle">
-            <span data-feather="calendar"></span>
-            Esta semana
-          </button>
+          <div class="col-md-6">
+            <h4>Egresos por Categoría</h4>
+            <canvas id="egresosChart" class="dashboard-chart"></canvas>
+          </div>
         </div>
-      </div>
 
-      <canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas>
+        <!-- Resumen de Presupuestos -->
+        <div class="row mt-4">
+          <div class="col-12">
+            <h4>Resumen de Presupuestos</h4>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Categoría</th>
+                  <th>Monto Presupuestado</th>
+                  <th>Monto Gastado</th>
+                  <th>Periodo</th>
+                  <th>Estado</th>
+                </tr>
+              </thead>
+              <tbody>
+              <%
+                java.util.List<modelvm.PresupuestoVM> pres = vm.getPresupuestos();
+                if (pres != null && !pres.isEmpty()) {
+                  for (modelvm.PresupuestoVM p : pres) {
+              %>
+                <tr>
+                  <td><%= p.getCategoria() %></td>
+                  <td><%= p.getMontoPresupuestado() %></td>
+                  <td><%= p.getMontoGastado() %></td>
+                  <td><%= p.getPeriodo() %></td>
+                  <td><%= p.getEstado() %></td>
+                </tr>
+              <%
+                  }
+                } else {
+              %>
+                <tr>
+                  <td colspan="5" class="text-center">No hay presupuestos registrados.</td>
+                </tr>
+              <%
+                }
+              %>
+              </tbody>
+            </table>
+          </div>
+        </div>
 
-      <h2>Detalle de gastos</h2>
-      <div class="table-responsive">
-        <table class="table table-striped table-sm">
-          <thead>
-            <tr>
-              <th scope="col">#</th>
-              <th scope="col">Header</th>
-              <th scope="col">Header</th>
-              <th scope="col">Header</th>
-              <th scope="col">Header</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>1,001</td>
-              <td>random</td>
-              <td>data</td>
-              <td>placeholder</td>
-              <td>text</td>
-            </tr>
-            <tr>
-              <td>1,002</td>
-              <td>placeholder</td>
-              <td>irrelevant</td>
-              <td>visual</td>
-              <td>layout</td>
-            </tr>
-            <tr>
-              <td>1,003</td>
-              <td>data</td>
-              <td>rich</td>
-              <td>dashboard</td>
-              <td>tabular</td>
-            </tr>
-            <tr>
-              <td>1,003</td>
-              <td>information</td>
-              <td>placeholder</td>
-              <td>illustrative</td>
-              <td>data</td>
-            </tr>
-            <tr>
-              <td>1,004</td>
-              <td>text</td>
-              <td>random</td>
-              <td>layout</td>
-              <td>dashboard</td>
-            </tr>
-            <tr>
-              <td>1,005</td>
-              <td>dashboard</td>
-              <td>irrelevant</td>
-              <td>text</td>
-              <td>placeholder</td>
-            </tr>
-            <tr>
-              <td>1,006</td>
-              <td>dashboard</td>
-              <td>illustrative</td>
-              <td>rich</td>
-              <td>data</td>
-            </tr>
-            <tr>
-              <td>1,007</td>
-              <td>placeholder</td>
-              <td>tabular</td>
-              <td>information</td>
-              <td>irrelevant</td>
-            </tr>
-            <tr>
-              <td>1,008</td>
-              <td>random</td>
-              <td>data</td>
-              <td>placeholder</td>
-              <td>text</td>
-            </tr>
-            <tr>
-              <td>1,009</td>
-              <td>placeholder</td>
-              <td>irrelevant</td>
-              <td>visual</td>
-              <td>layout</td>
-            </tr>
-            <tr>
-              <td>1,010</td>
-              <td>data</td>
-              <td>rich</td>
-              <td>dashboard</td>
-              <td>tabular</td>
-            </tr>
-            <tr>
-              <td>1,011</td>
-              <td>information</td>
-              <td>placeholder</td>
-              <td>illustrative</td>
-              <td>data</td>
-            </tr>
-            <tr>
-              <td>1,012</td>
-              <td>text</td>
-              <td>placeholder</td>
-              <td>layout</td>
-              <td>dashboard</td>
-            </tr>
-            <tr>
-              <td>1,013</td>
-              <td>dashboard</td>
-              <td>irrelevant</td>
-              <td>text</td>
-              <td>visual</td>
-            </tr>
-            <tr>
-              <td>1,014</td>
-              <td>dashboard</td>
-              <td>illustrative</td>
-              <td>rich</td>
-              <td>data</td>
-            </tr>
-            <tr>
-              <td>1,015</td>
-              <td>random</td>
-              <td>tabular</td>
-              <td>information</td>
-              <td>text</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </main>
+
+      </main>
+    </div>
   </div>
-</div>
 
-	<jsp:include page="footer.jsp"></jsp:include>
-
+  <jsp:include page="footer.jsp" />
 </body>
 </html>
