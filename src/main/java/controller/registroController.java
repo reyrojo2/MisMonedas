@@ -33,7 +33,17 @@ public class registroController extends HttpServlet {
         String fullName = request.getParameter("txtName");
         String email    = request.getParameter("txtEmail");
 
-        // Hash de la contraseÒa
+        if (userDao.existsByEmail(email)) {
+            request.setAttribute("error", "El correo " + email + " ya est√° registrado. Intenta con otro.");
+            
+            request.setAttribute("val_user", username);
+            request.setAttribute("val_name", fullName);
+            
+            request.getRequestDispatcher("registro.jsp").forward(request, response);
+            return;
+        }
+
+        // Hash de la contrase√±a
         String hashed = PasswordUtil.hash(password);
 
         User newUser = new User();
@@ -43,7 +53,7 @@ public class registroController extends HttpServlet {
         newUser.setEmail(email);
 
         if (userDao.save(newUser)) {
-            response.sendRedirect("login.jsp?msg=Usuario registrado con Èxito");
+            response.sendRedirect("login.jsp?msg=Usuario registrado con √©xito");
         } else {
             request.setAttribute("error", "No se pudo registrar el usuario");
             request.getRequestDispatcher("registro.jsp").forward(request, response);
