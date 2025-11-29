@@ -57,4 +57,23 @@ public class UserDAOImpl implements UserDao {
             throw new RuntimeException("Error registrando usuario", e);
         }
     }
+    @Override
+    public boolean existsByEmail(String email) {
+        String sql = "SELECT COUNT(*) FROM users WHERE email = ?";
+
+        try (Connection cn = ConexionMYSQL.obtenerConexion();
+             PreparedStatement ps = cn.prepareStatement(sql)) {
+
+            ps.setString(1, email);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error verificando email", e);
+        }
+        return false;
+    }
 }
